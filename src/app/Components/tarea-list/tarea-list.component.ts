@@ -10,6 +10,7 @@ import { TareaService } from '../../services/tarea.service';
 import { createTarea } from '../../Models/createtarea.model';
 import { TareaModel } from '../../Models/tarea.model';
 import { UserModel } from '../../Models/user.model';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-tarea-list',
@@ -41,7 +42,7 @@ export class TareaListComponent {
   usuarios: UserModel[] = [];
 
 
-  constructor(private fb: FormBuilder, private tareaService: TareaService){}
+  constructor(private fb: FormBuilder, private tareaService: TareaService, private usuarioService: UsuarioService){}
 
   ngOnInit(){
     this.tareaForm = this.fb.group({
@@ -51,18 +52,32 @@ export class TareaListComponent {
       completada: [false],
       usuarioo: [null, Validators.required]
     });
+    this.loadTareas();
+    this.loadUsuarios();
   }
   openDialog(){
     this.displayDialog = true;
   }
 
-  loadTareas(){
-    this.tareaService.getTareas().subscribe((data: TareaModel[])=>{
-      this.tareas = data;
+  loadUsuarios(){
+    console.log('pene');
+    this.usuarioService.getUsuarios().subscribe((data) => {
+      this.usuarios = data;
+      console.log(data);
     });
+  }
+
+  loadTareas(){
+    console.log('pene');
+    this.tareaService.getTareas().subscribe((data) => {
+      this.tareas = data;
+      console.log(data);
+    });
+    
   }
 
   closeDialog(){
     this.displayDialog = false;
   }
 }
+

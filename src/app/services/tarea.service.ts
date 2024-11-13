@@ -12,11 +12,11 @@ export class TareaService {
 
   constructor(private http: HttpClient) {}
 
-  getTareas(): Observable<TareaModel>{
-    return this.http.get<TareaModel>(this.apiUrl);
+  getTareas(): Observable<TareaModel[]>{
+    return this.http.get<TareaModel[]>(this.apiUrl);
   }
 
-  createTareas(tarea:createTarea): Observable<createTarea>{
-    return this.http.post<createTarea>(this.apiUrl, tarea);
+  createTareas(tarea: createTarea): Observable<TareaModel>{
+    return this.http.post<TareaModel>(this.apiUrl, tarea);
   }
 }
