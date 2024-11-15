@@ -40,6 +40,7 @@ export class TareaListComponent {
   displayDialog: boolean = false;
   tareaForm!: FormGroup;
   usuarios: UserModel[] = [];
+  isEditing: boolean = false;
 
 
   constructor(private fb: FormBuilder, private tareaService: TareaService, private usuarioService: UsuarioService){}
@@ -55,8 +56,15 @@ export class TareaListComponent {
     this.loadTareas();
     this.loadUsuarios();
   }
-  openDialog(){
+  openDialog(tarea?:any){
     this.displayDialog = true;
+    this.isEditing = tarea;
+    if(tarea){
+      this.tareaForm.patchValue(tarea);
+    }
+    else{
+      this.tareaForm.reset;
+    }
   }
 
   loadUsuarios(){
@@ -78,6 +86,52 @@ export class TareaListComponent {
 
   closeDialog(){
     this.displayDialog = false;
+  }
+
+  saveTarea(){
+    if (this.tareaForm.valid){
+      const tareaData = this.tareaForm.value;
+      if(this.isEditing){
+        this.updateTarea(tareaData);
+      }
+      else{
+        this.createTarea(tareaData);
+      }    
+    }
+  }
+
+  createTarea(tareaData: any) {
+    this.tareaService.createTareas({
+      tarea: tareaData.tarea,
+      descripcion: tareaData.descripcion,
+      idUsuario: tareaData.usuarioo?.idUsuario,
+    }).subscribe(() => {
+      this.loadTareas();
+      this.displayDialog = false;
+    })
+  }
+
+  updateTarea(TareaData: any){
+    this.tareaService.updateTarea(TareaData.idTarea,{
+      tarea: TareaData.tarea,
+      descripcion: TareaData.descripcion
+    }).subscribe(()=> {
+      this.loadTareas();
+      this.displayDialog = false
+    })
+  }
+
+  deleteTarea(id: number){
+    this.tareaService.deleteTarea(id).subscribe(() =>{
+      this.loadTareas();
+    })
+  }
+
+  finishTarea(tarea: any){
+    tarea.completada = !tarea.completada;
+    this.tareaService.finishTarea(tarea.idTarea).subscribe(()=>{
+      this.loadTareas();
+    })
   }
 }
 
